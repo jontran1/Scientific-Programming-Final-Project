@@ -17,11 +17,6 @@ A simple explanation for the theorem above is that there exist a polynomial *P*(
 ​	Interpolation is a way of approximating the true underlying function *f*(x) with some interpolating function *P*(x), but Taylors expansion is also an approximation method. Why use Interpolation then? both sound similar. The main difference is that a Taylor expansion approximates a function around *a point*; in addition, they concentrate their accuracy near that point. This means that as you moved farer and farer from the  specific point it becomes less accurate. A good approximating polynomial needs to be relatively accurate over the entire interval. 
 
 ```python
-import math
-import pandas as pd
-import numpy as np
-from pylab import *
-
 #parameter: x returns f(x) 
 def TaylorExp(x, n):
     y = 0
@@ -36,14 +31,6 @@ def getAllTaylorExp(x, n):
     for i in x:
         y.append(TaylorExp(i,n))
     return y
-
-x = linspace(0,10)
-P0 = getAllTaylorExp(x,1)
-P1 = getAllTaylorExp(x,2)
-P2 = getAllTaylorExp(x,3)
-P3 = getAllTaylorExp(x,4)
-P4 = getAllTaylorExp(x,5)
-ex = getAllTaylorExp(x,100)
 ```
 
 ​	![e_to_the_x_taylor_graph](e_to_the_x_taylor_graph.PNG)
@@ -75,34 +62,6 @@ def linearInterpolationList(xList, x0, x1, function):
     for i in xList:
         y.append(linearInterpolation(i,x0,x1,function))
     return y
-
-def absoluteError(approximatedValue, xValue, function):
-    return abs(function(xValue)-approximatedValue)
-
-def relativeError(absoluteError, xValue, function):
-    return absoluteError/function(xValue)
-
-def getAbsoluteErrorList(approximatedList, xValues, function):
-    absoluteErrorList = []
-    index = 0
-    for i in approximatedList:
-        absoluteErrorList.append(absoluteError(i, xValues[index], function))
-        index += 1
-    return absoluteErrorList
-
-def getRelativeErrorList(absoluteErrorList, xValues, function):
-    relativeErrorList = []
-    index = 0
-    for i in absoluteErrorList:
-        relativeErrorList.append(relativeError(i,xValues[index], function))
-        index += 1
-    return relativeErrorList
-
-def getAllyValues(x,function):
-    y = []
-    for i in x:
-        y.append(function(i))
-    return y
 ```
 
 
@@ -133,18 +92,6 @@ def lagrangeInterpolatingPolynomial(x, dataPoints, function):
                 lagrangeValue *= (numerator/denominator)
         approximatedValue += (function(i)*lagrangeValue)
     return approximatedValue
-
-def getAllLagrangeInterpolatingPolynomial(xList, dataPoints, function):
-    y = []
-    for i in xList:
-        y.append(lagrangeInterpolatingPolynomial(i,dataPoints,function))
-    return y
-
-def lagrangeInterpolateList(x,dataPoints,function):
-    y = []
-    for i in x:
-        y.append(lagrangeInterpolatingPolynomial(i,dataPoints,function))
-    return y
 ```
 
 ​	Lets take a look at the function cos(x), for this example the known data points are for each element x in the set {0,1,2,3,4,5,6,7,8,9,10} where y = *f*(x). I decided to approximate each value over a specified interval which is (0,10). 
@@ -202,6 +149,30 @@ As you can see the absolute error grows rapidly when x > 5 and is approaching 10
 For fun, I decided to see what the interpolating function will do pass the x when x = 10. 
 
 ​	In conclusions, the Lagrange Interpolation Polynomial is useful if you have a big enough sample. It does a poor job if the sample size is small. It can't predict the future. The last known data point will determine if the slope increases or decreases, but that is it. The true slope could be doing the exact opposite of the what the interpolation function approximated. 
+
+
+
+##### Cubic Splines
+
+​	Another piecewise polynomial approximation is the cubic spline. Its somewhat similar to linear piecewise approximation in that you use sub intervals. Cubic spline interpolation uses cubic polynomials between pair of nodes. Generally the cubic spline ensure that the interpolant is continuously differentiable on the interval; in addition, has a continuous second derivative. What does that mean? To be continuously differentiable is when taking the first derivative limit from both sides for a specific point will lead to the same limit. Taking the second derivative limit from both sides for a specific point will lead to the same result i.e local maximum or local minimum. That way the end points will give us that smooth curve we have been looking for. 
+
+![Cubic spline example 1](Cubic spline example 1.PNG)
+
+​	As you can see when using Neville's method it osculates wildly. Piecewise linear approximation doesn't give us that smooth curve we want. 
+
+![Cubic Spline Example 2](Cubic Spline Example 2.PNG)
+
+​	When applying cubic spline we get a much nicer more smooth graphical representation. 
+
+![Cubic spline example 4](Cubic spline example 4.PNG)
+
+![InterpolationPolynomailExample0 even](InterpolationPolynomailExample0 even.PNG)
+
+​	When applying it to cosine function you can see a much greater fit for cosine. The problem is cubic spline is difficult to implement. So It seems that as long as you gather  a large enough sample size, for Lagrange polynomial you can minizines the error, but Cubic spline might be a better option if you're sample size isn't large enough. 
+
+
+
+
 
 <https://math.stackexchange.com/questions/3020597/approximation-using-lagrange-interpolation>
 
