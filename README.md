@@ -269,5 +269,3 @@ For fun, I decided to see what the interpolating function will do pass the x whe
 ​	In conclusions, the Lagrange Interpolation Polynomial is useful if you have a big enough sample. It does a poor job if the sample size is small. It can't predict the future. The last known data point will determine if the slope increases or decreases, but that is it. The true slope could be doing the exact opposite of the what the interpolation function approximated. 
 
 <https://math.stackexchange.com/questions/3020597/approximation-using-lagrange-interpolation>
-
-
