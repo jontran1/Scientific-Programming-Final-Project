@@ -1,6 +1,12 @@
 ### Interpolation and Polynomial Approximation
 
-​	The most useful and well-known kind of functions mapping the set of real number onto itself is the polynomials. These polynomials uniformly approximate continuous functions. When given a function defined and continuous on a closed and bounded interval, there exist another polynomial that  approximates the given function, or is considered to be "close". 
+#### Abstract
+
+​	This paper is about interpolation in general. We will discuss the different between each interpolation method. When to use one over another. What problem each interpolation method solves and of course, gain a better understanding of interpolation in general.
+
+#### Introduction
+
+​	The most useful and well-known kind of functions mapping the set of real number onto itself is the polynomials. These polynomials uniformly approximate continuous functions. When given a function defined and continuous on a closed and bounded interval, there exist another polynomial that  approximates the given function, or is considered to be "close" enough. 
 
 #### Weierstrass Approximation Theorem
 
@@ -17,11 +23,6 @@ A simple explanation for the theorem above is that there exist a polynomial *P*(
 ​	Interpolation is a way of approximating the true underlying function *f*(x) with some interpolating function *P*(x), but Taylors expansion is also an approximation method. Why use Interpolation then? both sound similar. The main difference is that a Taylor expansion approximates a function around *a point*; in addition, they concentrate their accuracy near that point. This means that as you moved farer and farer from the  specific point it becomes less accurate. A good approximating polynomial needs to be relatively accurate over the entire interval. 
 
 ```python
-import math
-import pandas as pd
-import numpy as np
-from pylab import *
-
 #parameter: x returns f(x) 
 def TaylorExp(x, n):
     y = 0
@@ -30,38 +31,11 @@ def TaylorExp(x, n):
         denominator = math.factorial(i)
         y += numerator/denominator
     return y
-        
-def getAllTaylorExp(x, n):
-    y = []
-    for i in x:
-        y.append(TaylorExp(i,n))
-    return y
-
-x = linspace(0,10)
-P0 = getAllTaylorExp(x,1)
-P1 = getAllTaylorExp(x,2)
-P2 = getAllTaylorExp(x,3)
-P3 = getAllTaylorExp(x,4)
-P4 = getAllTaylorExp(x,5)
-ex = getAllTaylorExp(x,100)
-DF0=pd.DataFrame({'x':x,'P(0)':P0})
-DF1=pd.DataFrame({'x':x,'P(1)':P1})
-DF2=pd.DataFrame({'x':x,'P(2)':P2})
-DF3=pd.DataFrame({'x':x,'P(3)':P3})
-DF4=pd.DataFrame({'x':x,'e^x':P4})
-
-
-ax = DF0.plot(x='x',y='P(0)')
-DF1.plot(x='x',y='P(1)',ax=ax)
-DF2.plot(x='x',y='P(2)',ax=ax)
-DF3.plot(x='x',y='P(3)',ax=ax)
-DF4.plot(x='x',y='e^x',ax=ax)
-
 ```
 
 ​	![e_to_the_x_taylor_graph](e_to_the_x_taylor_graph.PNG)
 
-​	The line label as **e<sup>x</sup>** was given a n size of **100** compare to the other lines in the graph, **e<sup>x</sup>** is the more accurate. That's the point, better approximations are obtained for *f*(x) if higher degree Taylor polynomials are used, however, this isn't true for all functions. In conclusion, Taylor series is used for the approximation at a single number, as a result; these polynomials will give inaccurate approximations as we move away from that single number. 
+​	The line label as **e<sup>x</sup>** was given a degree size of **100** compare to the other lines in the graph, **e<sup>x</sup>** is the more accurate. That's the point, better approximations are obtained for *f*(x) if higher degree Taylor polynomials are used, however, this isn't true for all functions if the polynomial is of a lower degree. In conclusion, Taylor series is used for the approximation at a single number but loses its accuracy the farer we move from that point. 
 
 #### Lagrange Interpolation
 
@@ -82,64 +56,6 @@ def linearInterpolation(x, x0, x1,function):
     lagrange0 = (x-x1)/(x0-x1)
     lagrange1 = (x-x0)/(x1-x0)
     return lagrange0*function(x0) + lagrange1*function(x1)
-
-def linearInterpolationList(xList, x0, x1, function):
-    y = []
-    for i in xList:
-        y.append(linearInterpolation(i,x0,x1,function))
-    return y
-
-def absoluteError(approximatedValue, xValue, function):
-    return abs(function(xValue)-approximatedValue)
-
-def relativeError(absoluteError, xValue, function):
-    return absoluteError/function(xValue)
-
-def getAbsoluteErrorList(approximatedList, xValues, function):
-    absoluteErrorList = []
-    index = 0
-    for i in approximatedList:
-        absoluteErrorList.append(absoluteError(i, xValues[index], function))
-        index += 1
-    return absoluteErrorList
-
-def getRelativeErrorList(absoluteErrorList, xValues, function):
-    relativeErrorList = []
-    index = 0
-    for i in absoluteErrorList:
-        relativeErrorList.append(relativeError(i,xValues[index], function))
-        index += 1
-    return relativeErrorList
-
-def getAllyValues(x,function):
-    y = []
-    for i in x:
-        y.append(function(i))
-    return y
-
-x = linspace(5,9)
-y = getAllExp(x)
-
-#This will graph the function e^x from 5 to 9
-df0=pd.DataFrame({'x':x,'e^x':y})
-df1 = pd.DataFrame({'x':[6,8], 'Linear Interpolation x0=6, x1=8': [exp(6),exp(8)]})
-
-
-ax = df0.plot(x='x',y='e^x')
-df1.plot(x='x',y='Linear Interpolation x0=6, x1=8',ax=ax)
-
-#This will produce the chart includeing absolute and relative error. 
-absoluteErrorValue = absoluteError(linearInterpolation(7,6,8,exp), 7, exp)
-relativeErrorValue = relativeError(absoluteErrorValue, 7, exp)
-
-rows = ["Linear Interpolation e^x"]
-
-df2 = pd.DataFrame({'Approximation e^7': pd.Series([linearInterpolation(7,6,8,exp)], index=rows),
-                    'Absolute Error': pd.Series([absoluteErrorValue], index=rows),
-                    'Relative Error': pd.Series([relativeErrorValue],index=rows)
-                   })
-
-df2
 ```
 
 
@@ -148,37 +64,9 @@ df2
 
 In the graph above the blue line represents the true function **e<sup>x</sup>**. Using only two data points we denote the function we want to interpolate by g. We would approximate the function *f*(x) by *g*(x). Where *g*(x) lies between the function *f*(a) and *f*(b).  The absolute error and relative error is high when we which to approximate *f*(7) using *g*(7), however; what it lacks in accuracy it makes up for in simplicity. Lets see what happens if the two data points we have are far come each other. 
 
-```python
-x = [0,1,2,3,4,5,6,7,8,9,10]
-
-rows = ["Approximation e^7 x0=0, x1=10","Approximation e^7 x0=6, x1=8"]
-
-absouluteError0 = absoluteError(linearInterpolation(7,0,10,exp), 7, exp)
-absouluteError1 = absoluteError(linearInterpolation(7,6,8,exp), 7, exp)
-relativeError0 = relativeError(absouluteError0, 7, exp)
-relativeError1 = relativeError(absouluteError1, 7, exp)
-
-df0 = pd.DataFrame({'x': [0,10], 'Linear Interpolation e^x x0=0, x1=10': [exp(0), exp(10)]})
-df1 = pd.DataFrame({'x': x, 'Linear Interpolation e^x (0,10)':getAllExp(x)})
-x = linspace(0,10)
-df2 = pd.DataFrame({'x': x, 'True function e^x': getAllExp(x)})
-df3 = pd.DataFrame({'e^7 Approximation': pd.Series([linearInterpolation(7,0,10,exp),linearInterpolation(7,6,8,exp)], index=rows),
-                    'Absolute Error': pd.Series([absouluteError0, absouluteError1], index=rows),
-                    'Relative Error': pd.Series([relativeError0, relativeError1],index=rows)
-                   })
-
-ax = df0.plot(x='x',y='Linear Interpolation e^x x0=0, x1=10')
-df1.plot(x='x',y='Linear Interpolation e^x (0,10)',ax=ax)
-df2.plot(x='x',y='True function e^x',ax=ax)
-
-df3
-```
-
-
-
 ![Linear interpolation graph python example 2](Linear interpolation graph python example 2.PNG)
 
-The graph above shows a linear interpolation where (0,*f*(0)) and (10,*f*(10)) are known for the blue line. As you can imagine two data points that are far from each other won't produce accurate results with linear interpolation. For the best accuracy possible, it helpful to have two data points relativity close to one another.  Looking at the orange line it looks like if we took more and more samples we'll get a more accurate line. The orange line uses the x values from the set of real number {0,1,2,3,4,5,6,7,8,9,10}, where the value y = *f*(x). 
+The graph above shows a linear interpolation where (0,*f*(0)) and (10,*f*(10)) are known for the blue line. As you can imagine two data points that are far from each other won't produce accurate results with linear interpolation. For the best accuracy possible, it helpful to have two data points relativity close to one another.  Looking at the orange line it looks like if we took more and more samples we'll get a more accurate line. The orange line uses the x values from the set of real number {0,1,2,3,4,5,6,7,8,9,10}, where the value y = *f*(x) for each x.
 
 ##### Lagrange Interpolation Polynomial
 
@@ -186,7 +74,7 @@ The graph above shows a linear interpolation where (0,*f*(0)) and (10,*f*(10)) a
 
 ​	We are generalizing the concept of linear interpolation. Which brings me back to my previous point, the more samples taken from the data the more accurate the approximation.  Here is the python implementation of Lagrange Interpolation Polynomial. 
 
-``` python
+```python
 def lagrangeInterpolatingPolynomial(x, dataPoints, function):
     approximatedValue = 0
     for i in dataPoints:
@@ -198,18 +86,6 @@ def lagrangeInterpolatingPolynomial(x, dataPoints, function):
                 lagrangeValue *= (numerator/denominator)
         approximatedValue += (function(i)*lagrangeValue)
     return approximatedValue
-
-def getAllLagrangeInterpolatingPolynomial(xList, dataPoints, function):
-    y = []
-    for i in xList:
-        y.append(lagrangeInterpolatingPolynomial(i,dataPoints,function))
-    return y
-
-def lagrangeInterpolateList(x,dataPoints,function):
-    y = []
-    for i in x:
-        y.append(lagrangeInterpolatingPolynomial(i,dataPoints,function))
-    return y
 ```
 
 ​	Lets take a look at the function cos(x), for this example the known data points are for each element x in the set {0,1,2,3,4,5,6,7,8,9,10} where y = *f*(x). I decided to approximate each value over a specified interval which is (0,10). 
@@ -228,7 +104,7 @@ Based on the graph alone, the approximation of the function cos(x) seems pretty 
 
 ![LagrangeInterpolationPolynomialGraph0Chart](LagrangeInterpolationPolynomialGraph0Chart.PNG)
 
-The full chart is available in the source code provided, based on the chart the error is kept to minimal takes to the many samples taken. Now lets see what happens if we take remove some samples. To see how the interpolating function behaves, change the array named data points. 
+The full chart is available in the source code provided, based on the chart the error is kept to minimal thanks to the many samples taken. Now lets see what happens if we take remove some samples. To see how the interpolating function behaves, change the array called data points. 
 
 ```python
 dataPoints = [0,1,2,3,4,5,6,7,8,9,10]
@@ -248,7 +124,7 @@ y = getAllLagrangeInterpolatingPolynomial(x, dataPoints, math.cos)
 
 ​	I decided to try to approximate the function e<sup>x</sup> with it's positive slope, to see if my suspensions about the interpolating function's slope was correct. 
 
-``` python
+```python
 dataPoints = [0,1,2,3,4,5]
 x = linspace(0,10)
 y = getAllLagrangeInterpolatingPolynomial(x, dataPoints, exp)
@@ -268,4 +144,78 @@ For fun, I decided to see what the interpolating function will do pass the x whe
 
 ​	In conclusions, the Lagrange Interpolation Polynomial is useful if you have a big enough sample. It does a poor job if the sample size is small. It can't predict the future. The last known data point will determine if the slope increases or decreases, but that is it. The true slope could be doing the exact opposite of the what the interpolation function approximated. 
 
-<https://math.stackexchange.com/questions/3020597/approximation-using-lagrange-interpolation>
+##### Lagrange Polynomial Approximation Error
+
+![Lagrange Error](Lagrange Error.PNG)
+
+​	Looking at the error term above, it looks like the error is minimize if the value you are approximating is close to one of the known data points. This is evident based on what is seen when approximating cosine with Lagrange polynomial. 
+
+![InterpolationPolynomailExample0 even](InterpolationPolynomailExample0 even.PNG)
+
+​	As you can see when x is moving away from 8 the approximation error grows, but as x approaches 10 the error is minimized. So when Lagrange polynomial approximation its best to take a large sample of data. That way you can minimized the error throughout the whole interval. 
+
+#### Neville's Method
+
+​	Previously with Lagrange polynomial approximating, it would interpolate the data. In that case an explicit representation isn't needed, just the values of the polynomial at specified points. This is where Neville's Method comes in. Neville's method uses a programming technique known as dynamic programming. Before Lagrange polynomial would calculate the first approximation and then the second approximation. However, calculating the first approximation doesn't lessen the work for calculating the second approximation. 
+
+![Nevilles Method chart](Nevilles Method chart.PNG)
+
+​	The chart above shows Neville's Methods matrix. The first column is the known data points. The next columns will perform the calculations using the previous columns. The next columns will use the previous columns to lessen the work for the current column. 
+
+```python
+def nevillesMethod(xValues, yValues,x):
+    sizeN = len(xValues)
+    q = np.zeros((sizeN,sizeN))
+    for i in range(len(yValues)):
+        q[i][0] = yValues[i]
+
+    #Neville's method...
+    for i in range(1,sizeN):
+        for j in range(1, i+1):
+            numerator = ((x - xValues[i - j])*(q[i][j - 1]) - (x - xValues[i])*(q[i - 1][j - 1]))
+            demoninator = (xValues[i] - xValues[i - j])
+            q[i][j] =  numerator/ demoninator 
+    return q[sizeN-1][sizeN-1]
+```
+
+
+
+![Nevilles Method cosin](Nevilles Method cosin.PNG)
+
+Neville's method gives us the same result as Lagrange polynomial, but with the added help of dynamic programming. The disadvantage is that, Neville's method only uses half the matrix, thus there is wasted memory.
+
+#### Cubic Spline Interpolation
+
+​	Throughout my project, I kept running into these wild oscillations when interpolating data. It turns out that high-degree polynomials can oscillate erratically; minor fluctuation over a small portion of the interval can cause large fluctuations over the entire range. 
+
+![Cubic spline example 1](Cubic spline example 1.PNG)How do we fix this?
+
+##### Piecewise-Polynomial Approximation
+
+​	The simplest Interpolation is the linear interpolation method. Which is the linear interpolation between two points; however, what about linear interpolation between multiple points.  The piecewise- linear interpolation consists of joining a set of data points {(x0,f(x0)), (x1,f(x1))...(xn-1,f(xn-1))} by a series of straight lines. 
+
+![Piecewise Linear Approximation](Piecewise Linear Approximation.PNG)
+
+​	The draw back to the piecewise polynomial approximation is that there is no differentiability at the end points of each subinterval. So when representing the interpolating function graphically, the function isn't "smooth". Smoothness in a interpolating function is a requirement, meaning that the function approximating function MUST be continuously differentiable. 
+
+##### Cubic Spline
+
+​	Another piecewise polynomial approximation is the cubic spline. Its somewhat similar to linear piecewise approximation in that you use sub intervals. Cubic spline interpolation uses cubic polynomials between pair of nodes. Generally the cubic spline ensure that the interpolant is continuously differentiable on the interval; in addition, has a continuous second derivative. What does that mean? To be continuously differentiable is when taking the first derivative limit from both sides for a specific point will lead to the same limit. Taking the second derivative limit from both sides for a specific point will lead to the same result i.e local maximum or local minimum. That way the end points will give us that smooth curve we have been looking for. 
+
+![Cubic spline example 1](Cubic spline example 1.PNG)
+
+​	As you can see when using Neville's method it osculates wildly. Piecewise linear approximation doesn't give us that smooth curve we want. 
+
+![Cubic Spline Example 2](Cubic Spline Example 2.PNG)
+
+​	When applying cubic spline we get a much nicer more smooth graphical representation. 
+
+![Cubic spline example 4](Cubic spline example 4.PNG)
+
+![InterpolationPolynomailExample0 even](InterpolationPolynomailExample0 even.PNG)
+
+​	When applying it to cosine function you can see a much greater fit for cosine. The problem is cubic spline is difficult to implement. So It seems that as long as you gather  a large enough sample size, for Lagrange polynomial you can minizines the error, but Cubic spline might be a better option if you're sample size isn't large enough. 
+
+#### Conclusion
+
+​	Lagrange linear approximation is the easiest, but not very accurate. Lagrange Polynomial approximation is great if a large enough sample is collected.  This will minimized the error and the wild oscillations. Neville's method will give the same results as Lagrange with the addition of dynamic programming since an explicit representation of the polynomial isn't needed. The wild oscillations will be solved with the Piecewise linear approximation, but it doesn't give the "smooth" look. The Piecewise cubic spline approximation will approximate the function with great accurately and remove those wild oscillations. 
